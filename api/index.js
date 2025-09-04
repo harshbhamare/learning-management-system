@@ -4,9 +4,9 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 
 // Import routers
-const homeRouter = require("./routes/homeRouter");
-const dashboardRouter = require("./routes/dashboardRouter");
-const mentorRouter = require("./routes/adminRouter");
+const homeRouter = require("../routes/homeRouter");
+const dashboardRouter = require("../routes/dashboardRouter");
+const mentorRouter = require("../routes/adminRouter");
 
 const app = express();
 
