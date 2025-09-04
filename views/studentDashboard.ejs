@@ -1,185 +1,256 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hustler.XERO LMS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style type="text/tailwindcss">
-        /* Custom Tailwind styles for theme toggle and transitions */
-        .dark .bg-gray-100 {
-            background-color: #121212;
-        }
-        .dark .text-gray-900 {
-            color: #E0E0E0;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title><%= course.title %> | Student Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Base */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #f1f1f1;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #1f1f1f;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-left img{
+      height: 50px;
+    }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .signin-btn {
+      background: #2563eb;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .signin-btn:hover {
+      background: #1d4ed8;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      padding: 24px;
+    }
+
+    /* Video Player */
+    .video-container {
+      background: #2a2a2a;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      padding-top: 56.25%;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-info {
+      margin-top: 20px;
+      background: #1f1f1f;
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .video-info h2 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    /* Sidebar */
+    aside {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sidebar-box {
+      background: #1f1f1f;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .sidebar-box h3 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .chapter-header {
+      background: #2a2a2a;
+      padding: 10px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .chapter-header:hover {
+      background: #3a3a3a;
+    }
+
+    .videos-list {
+      list-style: none;
+      margin-top: 8px;
+      padding-left: 12px;
+      display: none;
+    }
+
+    .videos-list li {
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .videos-list li:hover {
+      background: #333;
+    }
+
+    .empty-message {
+      color: #aaa;
+      font-size: 14px;
+      margin: 10px 0;
+    }
+
+    @media(max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-900 font-inter transition-colors duration-500">
+<body>
 
-<div class="min-h-screen flex flex-col">
+  <header>
+    <!-- Left: Logo + Title -->
+    <div class="header-left">
+      <img src="/images/logo.png" alt="Hustler.XERO Logo" class="">
+      <h1><%= course.title %></h1>
+    </div>
 
-    <header class="bg-gray-200 dark:bg-gray-800 shadow-md p-4 flex justify-between items-center transition-colors duration-500">
-        <div class="flex items-center space-x-4">
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Hustler.XERO</h1>
+    <!-- Right: Sign In -->
+    <a href="/signin" class="signin-btn">Sign In</a>
+  </header>
+
+  <main>
+    <!-- Video Section -->
+    <section>
+      <% if (course.chapters.length > 0 && course.chapters[0].videos.length > 0) { %>
+        <div class="video-container">
+          <iframe id="video-player" 
+            src="<%= course.chapters[0].videos[0].youtubeLink.replace('watch?v=', 'embed/') %>" 
+            allowfullscreen>
+          </iframe>
         </div>
-        <button id="theme-toggle" class="p-2 rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors duration-300">
-            <i class="fas fa-sun text-xl hidden dark:block"></i>
-            <i class="fas fa-moon text-xl block dark:hidden"></i>
-        </button>
-    </header>
 
-    <main class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-8 p-6 lg:p-12">
+        <div class="video-info">
+          <h2 id="video-title"><%= course.chapters[0].videos[0].title %></h2>
+          <p id="video-description"><%= course.chapters[0].videos[0].description %></p>
+        </div>
+      <% } else { %>
+        <div class="video-info">
+          <h2>No lectures available yet</h2>
+          <p>Please check back later once the instructor uploads content.</p>
+        </div>
+      <% } %>
+    </section>
+
+    <!-- Sidebar -->
+    <aside>
+      <div class="sidebar-box">
+        <h3>Course Content</h3>
         
-        <section class="col-span-1 md:col-span-2 space-y-6">
-            
-            <div class="relative w-full aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-2xl">
-                <iframe 
-                    id="video-player"
-                    class="absolute top-0 left-0 w-full h-full" 
-                    src="https://www.youtube.com/embed/lA8sJp4R_7I" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
+        <% if (course.chapters.length > 0) { %>
+          <% course.chapters.forEach((chapter, cIndex) => { %>
+            <div class="chapter">
+              <div class="chapter-header">
+                <span>Chapter <%= cIndex+1 %>: <%= chapter.title %></span>
+                <span>▼</span>
+              </div>
+              <ul class="videos-list">
+                <% if (chapter.videos.length > 0) { %>
+                  <% chapter.videos.forEach((video, vIndex) => { %>
+                    <li class="video-item"
+                        data-title="<%= video.title %>"
+                        data-description="<%= video.description %>"
+                        data-video-id="<%= video.youtubeLink.split('v=')[1] %>">
+                      <%= (cIndex+1) %>.<%= (vIndex+1) %> <%= video.title %>
+                    </li>
+                  <% }) %>
+                <% } else { %>
+                  <li class="empty-message">No lectures in this chapter yet.</li>
+                <% } %>
+              </ul>
             </div>
+          <% }) %>
+        <% } else { %>
+          <p class="empty-message">No chapters added yet.</p>
+        <% } %>
+      </div>
+    </aside>
+  </main>
 
-            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl transition-colors duration-500">
-                <h2 id="video-title" class="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">The Entrepreneurial Mindset</h2>
-                <p id="video-description" class="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
-                    This session delves into the core principles of an entrepreneurial mindset, covering topics like risk-taking, resilience, and innovative thinking.
-                </p>
-            </div>
-        </section>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const chapters = document.querySelectorAll(".chapter");
+      const videoPlayer = document.getElementById("video-player");
+      const videoTitle = document.getElementById("video-title");
+      const videoDescription = document.getElementById("video-description");
 
-        <aside class="col-span-1 md:col-span-1 space-y-4">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl transition-colors duration-500">
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Course Content</h3>
-                
-                <div id="chapters-list" class="space-y-4">
-                    <div class="chapter" data-chapter="1">
-                        <div class="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-700 rounded-lg cursor-pointer transition-all duration-300 transform hover:scale-[1.02]">
-                            <h4 class="font-semibold text-gray-800 dark:text-white">Chapter 1: Foundational Principles</h4>
-                            <i class="fas fa-chevron-down text-gray-500 dark:text-gray-400 transform transition-transform"></i>
-                        </div>
-                        <ul class="videos-list mt-2 space-y-2 hidden">
-                            <li class="video-item p-3 rounded-lg cursor-pointer transition-colors duration-300 transform hover:bg-gray-200 dark:hover:bg-gray-700" 
-                                data-title="Introduction to Hustler.XERO"
-                                data-description="An in-depth introduction to what Hustler.XERO is all about, our mission, and what you can expect from this course."
-                                data-video-id="lA8sJp4R_7I"
-                            >
-                                <span class="text-gray-700 dark:text-gray-300">1.1 Introduction to Hustler.XERO</span>
-                            </li>
-                            <li class="video-item p-3 rounded-lg cursor-pointer transition-colors duration-300 transform hover:bg-gray-200 dark:hover:bg-gray-700"
-                                data-title="The Entrepreneurial Mindset"
-                                data-description="This session delves into the core principles of an entrepreneurial mindset, covering topics like risk-taking, resilience, and innovative thinking."
-                                data-video-id="L_Guz0u0-j8"
-                            >
-                                <span class="text-gray-700 dark:text-gray-300">1.2 The Entrepreneurial Mindset</span>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <div class="chapter" data-chapter="2">
-                        <div class="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-700 rounded-lg cursor-pointer transition-all duration-300 transform hover:scale-[1.02]">
-                            <h4 class="font-semibold text-gray-800 dark:text-white">Chapter 2: Strategy & Execution</h4>
-                            <i class="fas fa-chevron-down text-gray-500 dark:text-gray-400 transform transition-transform"></i>
-                        </div>
-                        <ul class="videos-list mt-2 space-y-2 hidden">
-                            <li class="video-item p-3 rounded-lg cursor-pointer transition-colors duration-300 transform hover:bg-gray-200 dark:hover:bg-gray-700"
-                                data-title="Market Research and Validation"
-                                data-description="Learn how to conduct effective market research and validate your business ideas before you invest too much time and money."
-                                data-video-id="2iT02P863qQ"
-                            >
-                                <span class="text-gray-700 dark:text-gray-300">2.1 Market Research & Validation</span>
-                            </li>
-                            <li class="video-item p-3 rounded-lg cursor-pointer transition-colors duration-300 transform hover:bg-gray-200 dark:hover:bg-gray-700"
-                                data-title="Building a Business Plan"
-                                data-description="This video provides a step-by-step guide to building a solid and scalable business plan."
-                                data-video-id="9_1zT5m47gE"
-                            >
-                                <span class="text-gray-700 dark:text-gray-300">2.2 Building a Business Plan</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </aside>
+      chapters.forEach(chapter => {
+        const header = chapter.querySelector(".chapter-header");
+        const videoList = chapter.querySelector(".videos-list");
 
-    </main>
-
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const htmlElement = document.documentElement;
-
-        // Load theme from localStorage
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            htmlElement.classList.add('dark');
-        } else {
-            htmlElement.classList.remove('dark');
-        }
-
-        // Handle theme toggle
-        themeToggle.addEventListener('click', () => {
-            if (htmlElement.classList.contains('dark')) {
-                htmlElement.classList.remove('dark');
-                localStorage.theme = 'light';
-            } else {
-                htmlElement.classList.add('dark');
-                localStorage.theme = 'dark';
-            }
+        header.addEventListener("click", () => {
+          videoList.style.display = videoList.style.display === "block" ? "none" : "block";
         });
 
-        // Handle accordion functionality and video switching
-        const chaptersList = document.getElementById('chapters-list');
-        const videoPlayer = document.getElementById('video-player');
-        const videoTitle = document.getElementById('video-title');
-        const videoDescription = document.getElementById('video-description');
-        let activeVideo = null; // Store the currently active video item
+        chapter.querySelectorAll(".video-item").forEach(item => {
+          item.addEventListener("click", () => {
+            const videoId = item.dataset.videoId;
+            const title = item.dataset.title;
+            const description = item.dataset.description;
 
-        chaptersList.addEventListener('click', (event) => {
-            const target = event.target.closest('.chapter');
-            if (target) {
-                const videosList = target.querySelector('.videos-list');
-                const chevron = target.querySelector('.fa-chevron-down');
-                
-                // Toggle display and rotate chevron
-                videosList.classList.toggle('hidden');
-                chevron.classList.toggle('rotate-180');
-            }
-
-            const videoItem = event.target.closest('.video-item');
-            if (videoItem) {
-                // Remove active class from previous video
-                if (activeVideo) {
-                    activeVideo.classList.remove('border-blue-500', 'bg-gray-200', 'dark:bg-gray-700');
-                    activeVideo.classList.add('bg-gray-100', 'dark:bg-gray-800');
-                }
-
-                // Add active class to the new video
-                videoItem.classList.add('border-blue-500', 'bg-gray-200', 'dark:bg-gray-700');
-                videoItem.classList.remove('bg-gray-100', 'dark:bg-gray-800');
-                activeVideo = videoItem;
-
-                // Update video player and details
-                const videoId = videoItem.getAttribute('data-video-id');
-                const title = videoItem.getAttribute('data-title');
-                const description = videoItem.getAttribute('data-description');
-                
-                videoPlayer.src = `https://www.youtube.com/embed/${videoId}`;
-                videoTitle.textContent = title;
-                videoDescription.textContent = description;
-            }
+            videoPlayer.src = `https://www.youtube.com/embed/${videoId}`;
+            videoTitle.textContent = title;
+            videoDescription.textContent = description;
+          });
         });
+      });
     });
-</script>
+  </script>
 
 </body>
 </html>

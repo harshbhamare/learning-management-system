@@ -1,356 +1,271 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | Hustler.XERO</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style type="text/tailwindcss">
-        /* Custom Tailwind styles to handle day/night mode transitions and component backgrounds */
-        .body-bg {
-            background-color: #f3f4f6;
-            color: #1f2937;
-        }
-        .dark .body-bg {
-            background-color: #0c0a09;
-            color: #d1d5db;
-        }
-        .card-bg {
-            background-color: #ffffff;
-        }
-        .dark .card-bg {
-            background-color: #1f2937;
-        }
-        .modal-bg {
-            background-color: rgba(0, 0, 0, 0.75);
-        }
-        .dark .modal-bg {
-            background-color: rgba(31, 41, 55, 0.9);
-        }
-    </style>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | Hustler.XERO</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+<body class="bg-gray-50 dark:bg-gray-900 font-inter transition-colors duration-500">
 
-<body class="body-bg font-sans transition-colors duration-500">
+  <!-- Header -->
+  <header class="bg-white dark:bg-gray-800 shadow-md p-6 flex justify-between items-center">
+    <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white">Admin Panel</h1>
+    <button id="theme-toggle" 
+      class="p-3 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+      <i class="fas fa-sun text-2xl hidden dark:block"></i>
+      <i class="fas fa-moon text-2xl block dark:hidden"></i>
+    </button>
+  </header>
 
-    <header class="card-bg shadow-lg p-6 flex justify-between items-center transition-colors duration-500">
-        <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white">Admin Panel</h1>
-        
-        <button id="theme-toggle" class="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300">
-            <i class="fas fa-sun text-2xl hidden dark:block"></i>
-            <i class="fas fa-moon text-2xl block dark:hidden"></i>
+  <!-- Main Content -->
+  <main class="p-6 lg:p-10">
+    <!-- Dashboard -->
+    <section id="dashboard" class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">All Courses</h2>
+        <button id="add-course-btn" 
+          class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg shadow hover:bg-blue-700 transition">
+          <i class="fas fa-plus mr-2"></i> Add New Course
         </button>
-    </header>
+      </div>
 
-    <main class="p-6 lg:p-10">
-        <section id="dashboard" class="card-bg rounded-2xl p-8 shadow-xl transition-colors duration-500">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">All Courses</h2>
-                <button id="add-course-btn" class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-300 hover:bg-blue-700">
-                    <i class="fas fa-plus mr-2"></i> Add New Course
-                </button>
-            </div>
-            
-            <div id="course-list" class="overflow-x-auto">
-                <table class="min-w-full table-auto text-sm text-left">
-                    <thead class="bg-gray-200 dark:bg-gray-700">
-                        <tr>
-                            <th class="py-3 px-4 font-semibold text-gray-800 dark:text-gray-200">Course Name</th>
-                            <th class="py-3 px-4 font-semibold text-gray-800 dark:text-gray-200 hidden md:table-cell">Instructor</th>
-                            <th class="py-3 px-4 font-semibold text-gray-800 dark:text-gray-200 hidden lg:table-cell">Chapters</th>
-                            <th class="py-3 px-4 font-semibold text-gray-800 dark:text-gray-200 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="course-table-body" class="divide-y divide-gray-200 dark:divide-gray-700">
-                        </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
-
-    <div id="course-modal" class="hidden fixed inset-0 z-50 overflow-auto modal-bg flex items-center justify-center transition-opacity duration-300 opacity-0">
-        <div class="card-bg rounded-xl shadow-2xl p-8 w-full max-w-2xl transform scale-95 transition-transform duration-300">
-            <div class="flex justify-between items-center mb-6">
-                <h3 id="modal-title" class="text-2xl font-bold text-gray-900 dark:text-white"></h3>
-                <button id="close-modal-btn" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
-                    <i class="fas fa-times text-2xl"></i>
-                </button>
-            </div>
-            
-            <form id="course-form" class="space-y-4">
-                <input type="hidden" id="course-id">
-                <div>
-                    <label for="course-title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Course Title</label>
-                    <input type="text" id="course-title" name="title" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                <div>
-                    <label for="course-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                    <textarea id="course-description" name="description" required rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white focus:ring-blue-500 focus:border-blue-500"></textarea>
-                </div>
-                <div>
-                    <label for="course-thumbnail" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Thumbnail URL</label>
-                    <input type="url" id="course-thumbnail" name="thumbnailUrl" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-white focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                <div class="flex justify-end pt-4">
-                    <button type="submit" class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-300 hover:bg-blue-700">
-                        Save Course
+      <!-- Courses Table -->
+      <div id="course-list" class="overflow-x-auto">
+        <table class="min-w-full table-auto border-collapse">
+          <thead>
+            <tr class="bg-gray-100 dark:bg-gray-700">
+              <th class="py-3 px-4 text-left font-semibold text-gray-800 dark:text-gray-200">Course Name</th>
+              <th class="py-3 px-4 hidden md:table-cell text-left">Instructor</th>
+              <th class="py-3 px-4 hidden lg:table-cell text-left">Chapters</th>
+              <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            <% if (courses.length > 0) { %>
+              <% courses.forEach(course => { %>
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                  <td class="py-4 px-4 font-medium text-gray-900 dark:text-gray-100"><%= course.title %></td>
+                  <td class="py-4 px-4 hidden md:table-cell text-gray-700 dark:text-gray-300"><%= course.instructor %></td>
+                  <td class="py-4 px-4 hidden lg:table-cell text-gray-700 dark:text-gray-300"><%= course.chapters.length %></td>
+                  <td class="py-4 px-4 text-right space-x-3">
+                    <button class="view-videos-btn text-blue-500 hover:text-blue-700" data-id="<%= course._id %>" title="Manage Chapters">
+                      <i class="fas fa-video"></i>
                     </button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <div id="videos-modal" class="hidden fixed inset-0 z-50 overflow-auto modal-bg flex items-center justify-center transition-opacity duration-300 opacity-0">
-        <div class="card-bg rounded-xl shadow-2xl p-8 w-full max-w-4xl transform scale-95 transition-transform duration-300">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Manage Videos for "<span id="videos-course-title"></span>"</h3>
-                <button id="close-videos-modal-btn" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
-                    <i class="fas fa-times text-2xl"></i>
-                </button>
-            </div>
-            
-            <div id="chapters-list-container" class="space-y-4 max-h-96 overflow-y-auto">
-                </div>
+                    <button class="edit-course-btn text-yellow-500 hover:text-yellow-700" data-id="<%= course._id %>" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="delete-course-btn text-red-500 hover:text-red-700" data-id="<%= course._id %>" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="4" class="text-center py-6 text-gray-500 dark:text-gray-400">
+                  No courses found. Add one to get started!
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
-            <div class="flex justify-end mt-6">
-                <button id="add-chapter-btn" class="bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-300 hover:bg-green-700">
-                    <i class="fas fa-plus mr-2"></i> Add Chapter
-                </button>
-            </div>
+  <!-- Course Modal -->
+  <div id="course-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 w-full max-w-2xl relative">
+      <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+      <h3 id="modal-title" class="text-2xl font-bold mb-6 text-gray-900 dark:text-white"></h3>
+      <form id="course-form" method="post" action="/admin/add-course" class="space-y-4">
+        <input type="hidden" id="course-id">
+        <div>
+          <label for="course-title" class="block text-sm font-medium mb-1">Course Title</label>
+          <input type="text" id="course-title" name="title" required 
+            class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
         </div>
+        <div>
+          <label for="course-description" class="block text-sm font-medium mb-1">Description</label>
+          <textarea id="course-description" name="description" required rows="3" 
+            class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600"></textarea>
+        </div>
+        <div>
+          <label for="course-thumbnail" class="block text-sm font-medium mb-1">Thumbnail URL</label>
+          <input type="url" id="course-thumbnail" name="thumbnailUrl" required 
+            class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+        </div>
+        <div>
+          <label for="course-instructor" class="block text-sm font-medium mb-1">Course Instructor</label>
+          <input type="text" id="course-instructor" name="instructor" required 
+            class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+        </div>
+        <div class="flex justify-end pt-4">
+          <button type="submit" 
+            class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg shadow hover:bg-blue-700 transition">
+            Save Course
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
+
+  <!-- Videos Modal -->
+  <div id="videos-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 w-full max-w-4xl relative">
+      <button id="close-videos-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+      <h3 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+        Manage Chapters for "<span id="videos-course-title"></span>"
+      </h3>
+      <div class="space-y-6">
+        <div id="chapters-list-container" class="space-y-4 max-h-96 overflow-y-auto pr-4">
+          <div id="chapters-content" class="space-y-4"></div>
+        </div>
+        <form id="add-chapter-form" method="POST" class="pt-6 border-t border-gray-200 dark:border-gray-700 space-y-3">
+          <h4 class="text-lg font-semibold">Add New Chapter</h4>
+          <div class="flex flex-col sm:flex-row items-stretch gap-3">
+            <input type="text" name="title" placeholder="Enter new chapter title" required 
+              class="flex-grow border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+            <button type="submit" 
+              class="bg-green-600 text-white font-semibold py-2 px-6 rounded-lg shadow hover:bg-green-700 transition">
+              <i class="fas fa-plus mr-2"></i>Add Chapter
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const coursesData = <%- JSON.stringify(courses) %>;
+      const themeToggle = document.getElementById('theme-toggle');
+      const htmlElement = document.documentElement;
+
+      // Dark mode toggle
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        htmlElement.classList.add('dark');
+      } else {
+        htmlElement.classList.remove('dark');
+      }
+      themeToggle.addEventListener('click', () => {
+        htmlElement.classList.toggle('dark');
+        localStorage.theme = htmlElement.classList.contains('dark') ? 'dark' : 'light';
+      });
+
+      // Modals
+      const courseModal = document.getElementById('course-modal');
+      const videosModal = document.getElementById('videos-modal');
+      const showModal = (modal) => modal.classList.remove('hidden');
+      const hideModal = (modal) => modal.classList.add('hidden');
+
+      document.getElementById('add-course-btn').addEventListener('click', () => {
+        document.getElementById('modal-title').textContent = 'Add New Course';
+        document.getElementById('course-form').reset();
+        showModal(courseModal);
+      });
+      document.getElementById('close-modal-btn').addEventListener('click', () => hideModal(courseModal));
+      document.getElementById('close-videos-modal-btn').addEventListener('click', () => hideModal(videosModal));
+
+      // Escape key closes modals
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          hideModal(courseModal);
+          hideModal(videosModal);
+        }
+      });
+
+      // Handle course actions
+      document.getElementById('course-list').addEventListener('click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        const courseId = target.dataset.id;
+        const course = coursesData.find(c => c._id === courseId);
+
+        if (target.classList.contains('view-videos-btn') && course) {
+          document.getElementById('videos-course-title').textContent = course.title;
+          document.getElementById('add-chapter-form').action = `/admin/course/${courseId}/add-chapter`;
+          const chaptersContent = document.getElementById('chapters-content');
+          chaptersContent.innerHTML = '';
+
+          if (course.chapters && course.chapters.length > 0) {
+            course.chapters.forEach(chapter => {
+              const chapterId = chapter._id;
+              const chapterElement = document.createElement('div');
+              chapterElement.className = 'p-4 rounded-lg bg-gray-100 dark:bg-gray-800';
+
+              let videosHTML = `<div class="mt-3 pl-4 border-l-2 border-gray-300 dark:border-gray-600 space-y-2" id="videos-list-${chapterId}">`;
+              if (chapter.videos && chapter.videos.length > 0) {
+                chapter.videos.forEach(video => {
+                  videosHTML += `
+                    <div class="text-sm">
+                      <strong>${video.title}</strong>
+                      <p class="text-gray-500 dark:text-gray-400">${video.description}</p>
+                    </div>`;
+                });
+              } else {
+                videosHTML += '<p class="text-sm text-gray-400 no-videos-message">No lectures in this chapter yet.</p>';
+              }
+              videosHTML += '</div>';
+
+              chapterElement.innerHTML = `
+                <p class="font-semibold text-lg text-gray-900 dark:text-gray-100">${chapter.title}</p>
+                ${videosHTML}
+                <form method="POST" action="/admin/course/${courseId}/chapter/${chapterId}/add-video" 
+                  class="add-video-form space-y-3 mt-4 p-3 bg-gray-200 dark:bg-gray-700 rounded-md" data-chapter-id="${chapterId}">
+                  <h5 class="font-semibold text-sm">Add New Lecture</h5>
+                  <input type="text" name="title" placeholder="Lecture Title" required class="w-full border rounded-lg px-3 py-2 dark:bg-gray-600 dark:border-gray-500">
+                  <textarea name="description" placeholder="Lecture Description" required rows="2" class="w-full border rounded-lg px-3 py-2 dark:bg-gray-600 dark:border-gray-500"></textarea>
+                  <input type="url" name="youtubeLink" placeholder="YouTube Link" required class="w-full border rounded-lg px-3 py-2 dark:bg-gray-600 dark:border-gray-500">
+                  <button type="submit" class="bg-blue-600 text-white px-4 py-2 text-sm rounded-lg hover:bg-blue-700 transition">Add Lecture</button>
+                </form>
+              `;
+              chaptersContent.appendChild(chapterElement);
+            });
+          } else {
+            chaptersContent.innerHTML = '<p class="text-center text-gray-500">No chapters yet.</p>';
+          }
+          showModal(videosModal);
+        }
+      });
+
+      // Handle add video
+      document.getElementById('videos-modal').addEventListener('submit', async function(e) {
+        if (!e.target.classList.contains('add-video-form')) return;
+        e.preventDefault();
+        const form = e.target;
+        const chapterId = form.dataset.chapterId;
+        try {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.fromEntries(new FormData(form)))
+          });
+          if (!response.ok) throw new Error('Server error');
+          const newVideo = await response.json();
+          const videoListContainer = document.getElementById(`videos-list-${chapterId}`);
+          const noVideosMessage = videoListContainer.querySelector('.no-videos-message');
+          if (noVideosMessage) noVideosMessage.remove();
+          const newVideoElement = document.createElement('div');
+          newVideoElement.className = 'text-sm';
+          newVideoElement.innerHTML = `<strong>${newVideo.title}</strong><p class="text-gray-500 dark:text-gray-400">${newVideo.description}</p>`;
+          videoListContainer.appendChild(newVideoElement);
+          form.reset();
+        } catch (error) {
+          console.error('Failed to add video:', error);
+          alert('Could not add lecture.');
+        }
+      });
+    });
+  </script>
 
 </body>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const htmlElement = document.documentElement;
-
-        // Theme toggle logic
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            htmlElement.classList.add('dark');
-        } else {
-            htmlElement.classList.remove('dark');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (htmlElement.classList.contains('dark')) {
-                htmlElement.classList.remove('dark');
-                localStorage.theme = 'light';
-            } else {
-                htmlElement.classList.add('dark');
-                localStorage.theme = 'dark';
-            }
-        });
-
-        // --- Data Simulation (as per your MongoDB schema) ---
-        let courses = [{
-            _id: "course1",
-            title: "Full Stack Web Development",
-            instructor: { name: "Jane Mentor" },
-            chapters: [{
-                chapterId: "chap1",
-                title: "Chapter 1: The Foundations",
-                videos: [{
-                    videoId: "vid1",
-                    title: "Intro to HTML",
-                    youtubeLink: "https://www.youtube.com/playlist?list=PLXDouhCU5r6qznaXfqOjLg9YJU8DB4A8e7",
-                    duration: 300,
-                    order: 1
-                }, {
-                    videoId: "vid2",
-                    title: "CSS Styling",
-                    youtubeLink: "https://www.youtube.com/playlist?list=PLXDouhCU5r6qznaXfqOjLg9YJU8DB4A8e8",
-                    duration: 450,
-                    order: 2
-                }]
-            }]
-        }, {
-            _id: "course2",
-            title: "UI/UX Design with Figma",
-            instructor: { name: "Alex Mentor" },
-            chapters: [{
-                chapterId: "chap2",
-                title: "Chapter 1: Design Principles",
-                videos: [{
-                    videoId: "vid3",
-                    title: "Intro to Figma",
-                    youtubeLink: "https://www.youtube.com/playlist?list=PLXDouhCU5r6qznaXfqOjLg9YJU8DB4A8e9",
-                    duration: 600,
-                    order: 1
-                }]
-            }]
-        }];
-
-        // --- DOM Elements ---
-        const courseTableBody = document.getElementById('course-table-body');
-        const addCourseBtn = document.getElementById('add-course-btn');
-        const courseModal = document.getElementById('course-modal');
-        const closeCourseModalBtn = document.getElementById('close-modal-btn');
-        const courseForm = document.getElementById('course-form');
-        const modalTitle = document.getElementById('modal-title');
-        
-        const videosModal = document.getElementById('videos-modal');
-        const closeVideosModalBtn = document.getElementById('close-videos-modal-btn');
-        const videosCourseTitle = document.getElementById('videos-course-title');
-        const chaptersListContainer = document.getElementById('chapters-list-container');
-        const addChapterBtn = document.getElementById('add-chapter-btn');
-
-        // --- Modal & UI Management ---
-        const showModal = (modal) => {
-            modal.classList.remove('hidden', 'opacity-0');
-            modal.classList.add('flex', 'opacity-100');
-        };
-
-        const hideModal = (modal) => {
-            modal.classList.add('opacity-0');
-            modal.classList.remove('opacity-100');
-            setTimeout(() => modal.classList.remove('flex'), 300);
-            setTimeout(() => modal.classList.add('hidden'), 300);
-        };
-
-        closeCourseModalBtn.addEventListener('click', () => hideModal(courseModal));
-        closeVideosModalBtn.addEventListener('click', () => hideModal(videosModal));
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                hideModal(courseModal);
-                hideModal(videosModal);
-            }
-        });
-
-        // --- CRUD Operations ---
-        const renderCourses = () => {
-            courseTableBody.innerHTML = '';
-            if (courses.length === 0) {
-                courseTableBody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-gray-500 dark:text-gray-400">No courses found.</td></tr>`;
-                return;
-            }
-            courses.forEach(course => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200';
-                tr.innerHTML = `
-                    <td class="py-4 px-4 font-medium">${course.title}</td>
-                    <td class="py-4 px-4 hidden md:table-cell">${course.instructor.name}</td>
-                    <td class="py-4 px-4 hidden lg:table-cell">${course.chapters.length}</td>
-                    <td class="py-4 px-4 text-right">
-                        <button class="view-videos-btn text-blue-500 hover:text-blue-700 mr-4" data-id="${course._id}" title="Manage Videos"><i class="fas fa-video"></i></button>
-                        <button class="edit-course-btn text-yellow-500 hover:text-yellow-700 mr-4" data-id="${course._id}" title="Edit Course"><i class="fas fa-edit"></i></button>
-                        <button class="delete-course-btn text-red-500 hover:text-red-700" data-id="${course._id}" title="Delete Course"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-                courseTableBody.appendChild(tr);
-            });
-        };
-
-        const renderVideos = (course) => {
-            videosCourseTitle.textContent = course.title;
-            chaptersListContainer.innerHTML = '';
-            
-            if (course.chapters.length === 0) {
-                chaptersListContainer.innerHTML = `<p class="text-center text-gray-500 dark:text-gray-400">This course has no chapters yet. Add one!</p>`;
-                return;
-            }
-
-            course.chapters.forEach(chapter => {
-                const chapterDiv = document.createElement('div');
-                chapterDiv.className = 'card-bg rounded-lg p-4 shadow-sm';
-                chapterDiv.innerHTML = `
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="font-semibold text-gray-900 dark:text-white">${chapter.title}</h4>
-                        <div class="space-x-2">
-                            <button class="edit-chapter-btn text-yellow-500 hover:text-yellow-700" data-chapter-id="${chapter.chapterId}" title="Edit Chapter"><i class="fas fa-edit"></i></button>
-                            <button class="delete-chapter-btn text-red-500 hover:text-red-700" data-chapter-id="${chapter.chapterId}" title="Delete Chapter"><i class="fas fa-trash"></i></button>
-                            <button class="add-video-btn text-green-500 hover:text-green-700" data-chapter-id="${chapter.chapterId}" title="Add Video"><i class="fas fa-plus"></i></button>
-                        </div>
-                    </div>
-                    <ul class="space-y-2 text-gray-600 dark:text-gray-400">
-                        ${chapter.videos.map(video => `
-                            <li class="flex justify-between items-center py-2 px-3 bg-gray-100 dark:bg-gray-800 rounded-md">
-                                <span>${video.order}. ${video.title}</span>
-                                <div class="space-x-2">
-                                    <button class="edit-video-btn text-yellow-500 hover:text-yellow-700" data-video-id="${video.videoId}" data-chapter-id="${chapter.chapterId}" title="Edit Video"><i class="fas fa-edit"></i></button>
-                                    <button class="delete-video-btn text-red-500 hover:text-red-700" data-video-id="${video.videoId}" data-chapter-id="${chapter.chapterId}" title="Delete Video"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </li>
-                        `).join('')}
-                    </ul>
-                `;
-                chaptersListContainer.appendChild(chapterDiv);
-            });
-        };
-
-        // --- Event Listeners for Dashboard ---
-        addCourseBtn.addEventListener('click', () => {
-            modalTitle.textContent = 'Add New Course';
-            courseForm.reset();
-            document.getElementById('course-id').value = '';
-            showModal(courseModal);
-        });
-
-        courseForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const courseId = document.getElementById('course-id').value;
-            const title = document.getElementById('course-title').value;
-            const description = document.getElementById('course-description').value;
-            const thumbnailUrl = document.getElementById('course-thumbnail').value;
-
-            if (courseId) { // Edit an existing course
-                const courseIndex = courses.findIndex(c => c._id === courseId);
-                if (courseIndex > -1) {
-                    courses[courseIndex].title = title;
-                    courses[courseIndex].description = description;
-                    courses[courseIndex].thumbnailUrl = thumbnailUrl;
-                }
-            } else { // Add a new course
-                const newCourse = {
-                    _id: `course${courses.length + 1}`,
-                    title,
-                    description,
-                    thumbnailUrl,
-                    instructor: { name: "Mentor Name" }, // Static for this example
-                    chapters: []
-                };
-                courses.push(newCourse);
-            }
-            
-            renderCourses();
-            hideModal(courseModal);
-        });
-
-        courseTableBody.addEventListener('click', (e) => {
-            const target = e.target.closest('button');
-            if (!target) return;
-
-            const courseId = target.getAttribute('data-id');
-            const course = courses.find(c => c._id === courseId);
-
-            if (target.classList.contains('edit-course-btn')) {
-                modalTitle.textContent = 'Edit Course';
-                document.getElementById('course-id').value = course._id;
-                document.getElementById('course-title').value = course.title;
-                document.getElementById('course-description').value = course.description || '';
-                document.getElementById('course-thumbnail').value = course.thumbnailUrl || '';
-                showModal(courseModal);
-            } else if (target.classList.contains('delete-course-btn')) {
-                if (confirm(`Are you sure you want to delete the course "${course.title}"?`)) {
-                    courses = courses.filter(c => c._id !== courseId);
-                    renderCourses();
-                }
-            } else if (target.classList.contains('view-videos-btn')) {
-                // This is where you would fetch data in a real app
-                if (course) {
-                    renderVideos(course);
-                    showModal(videosModal);
-                }
-            }
-        });
-
-        // Initial render
-        renderCourses();
-    });
-</script>
 </html>

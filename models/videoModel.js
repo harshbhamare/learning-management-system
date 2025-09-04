@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+// models/videoModel.js
+const mongoose = require("mongoose");
 
 const videoSchema = new mongoose.Schema({
     videoId: {
@@ -20,6 +21,6 @@ const videoSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-}, { _id: false });
+}, { _id: false }); 
 
 module.exports = videoSchema;
